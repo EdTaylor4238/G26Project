@@ -141,7 +141,7 @@ void ModelPart::setVisible(bool isVisible)
         set(1, "true");
     }
     else {
-        set(1, "false");
+        set(0, "false");
     }
 }
 
@@ -186,7 +186,7 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     return actor;
     }
 
-     //vtkActor* ModelPart::getNewActor() {
+     vtkActor* ModelPart::getNewActor() {
          /* This is a placeholder function that will be used in the next worksheet.
           *
           * The default mapper/actor combination can only be used to render the part in
@@ -195,22 +195,25 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
           * of this function. */
 
 
-          /* 1. Create new mapper */
-
-          /* 2. Create new actor and link to mapper */
-
-          /* 3. Link the vtkProperties of the original actor to the new actor. This means
-           *    if you change properties of the original part (colour, position, etc), the
-           *    changes will be reflected in the GUI AND VR rendering.
-           *
-           *    See the vtkActor documentation, particularly the GetProperty() and SetProperty()
-           *    functions.
-           */
+         // /* 1. Create new mapper */
+         //vtkNew<vtkPolyDataMapper> newMapper;
+         //vtkSmartPointer<vtkActor> newActor;
+         // /* 2. Create new actor and link to mapper */
+         //vtkActor *newActor = vtkSmartPointer<vtkActor>::New();
+         //newActor->SetMapper(newMapper);
+         // /* 3. Link the vtkProperties of the original actor to the new actor. This means
+         //  *    if you change properties of the original part (colour, position, etc), the
+         //    changes will be reflected in the GUI AND VR rendering.*/
+         //       
+         //newActor->SetProperty(actor->GetProperty());
+         //   // See the vtkActor documentation, particularly the GetProperty() and SetProperty()
+         // //    functions.
+         //  
 
 
            /* The new vtkActor pointer must be returned here */
-       //    return nullptr;
+           return newActor;
 
-       //}
+       }
 
        //end Modelpart.cpp

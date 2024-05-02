@@ -1,5 +1,7 @@
 #include "mainwindow.h"
+#include "VRRenderThread.h"
 #include "./ui_mainwindow.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include "optiondialog.h"
@@ -11,6 +13,7 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkCamera.h"
 #include <vtkRenderer.h>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -55,6 +58,40 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->treeView, &QTreeView::clicked, this, &MainWindow::on_actionItem_Options_triggered);
 
+    /* Create / allocate the ModelList */
+    this->partList = new ModelPartList("Parts List");
+
+    /* Link it to the tree view in the GUI */
+    ui->treeView->setModel(this->partList);
+
+    /* Manually create a model tree - there are much better and more flexible ways of doing this,
+     * e.g. with nested functions. This is just a quick example as a starting point. */
+    ModelPart* rootItem = this->partList->getRootItem();
+
+    /* Add 3 top level items */
+    for (int i = 0; i < 3; i++) {
+        /* Creates strings for both data columns */
+        QString name = QString("TopLevel %1").arg(i);
+        QString visible("true");
+
+        /* Create child item */
+        ModelPart* childItem = new ModelPart({ name, visible });
+
+        /* Append to tree top-level */
+        rootItem->appendChild(childItem);
+
+        /* Add 5 sub-items */
+        for (int j = 0; j < 5; j++) {
+            QString name = QString("Item %1,%2").arg(i).arg(j);
+            QString visible("true");
+
+            ModelPart* childChildItem = new ModelPart({ name, visible });
+
+            /* Append to parent */
+            childItem->appendChild(childChildItem);
+        }
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -65,7 +102,8 @@ MainWindow::~MainWindow()
 void MainWindow::handleButton()
 {
     // Emit the statusUpdateMessage signal to update the status bar
-    emit statusUpdateMessage("Add button was clicked", 3000); // 3000 milliseconds timeout
+    emit statusUpdateMessage("View is reset", 100); // 100 milliseconds timeout
+    renderer->ResetCamera();
 }
 
 void MainWindow::handleButton2()
@@ -74,6 +112,7 @@ void MainWindow::handleButton2()
     ui->treeView->clearSelection();
     emit statusUpdateMessage("Second button was clicked", 3000); // 3000 milliseconds timeout
 }
+
 void MainWindow::handleTreeClicked(const QModelIndex& index) {
     
     /* Get a pointer to the item from the index */
@@ -85,18 +124,23 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
     emit statusUpdateMessage("Selected item: " + itemName, 3000);
 }
 
+void MainWindow::startStopVRButton()
+{
+    emit statusUpdateMessage("VR button clicked", 100); // 100 milliseconds timeout
+}
+
 // Slot function added to MainWindow.cpp
     void MainWindow::on_actionOpen_File_triggered() {
-    QString fileName = QFileDialog::getOpenFileName(
+    QStringList fileList = QFileDialog::getOpenFileNames(
         this,
         tr("Open File"),
         "C:\\",
         tr("STL Files (*.stl);;Text Files (*.txt)"));
 
-    emit statusUpdateMessage("Selected file: " + fileName, 3000);
+    //emit statusUpdateMessage("Selected file: " + fileName, 3000);
 
     // Check if a file was selected
-    if (fileName.isEmpty()) {
+    if (fileList.isEmpty()) {
         // Do something when no file is selected, e.g., show a message
         statusBar()->showMessage(tr("No file selected."));
         return;
@@ -118,21 +162,22 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
     // Get the index of the selected item in the tree view
     //QModelIndex index = ui->treeView->currentIndex();
 
-    QList<QVariant> data {fileName, visible};
-    QModelIndex parent;
-    QModelIndex newIndex = partList->appendChild(parent, data);
+    for (int n = 0; n < fileList.length(); n++)
+    {
+        QList<QVariant> data{ fileList[n], visible};
+        QModelIndex parent;
+        QModelIndex newIndex = partList->appendChild(parent, data);
 
-    childItem = static_cast<ModelPart*>(newIndex.internalPointer());
+        childItem = static_cast<ModelPart*>(newIndex.internalPointer());
 
-
-    
         // Update the tree view to reflect the changes
-    ui->treeView->update();
-    
-    childItem->loadSTL(fileName);
+        ui->treeView->update();
 
-    updateRender();
-
+        childItem->loadSTL(fileList[n]);
+        updateRender();
+        emit statusUpdateMessage((n+1) + "/" + (int)fileList.length(), 10);
+    }
+    emit statusUpdateMessage("Done :)", 10);
 }
 
     void MainWindow::updateRender() {
@@ -244,3 +289,12 @@ void MainWindow::on_actionItem_Options_triggered()
         emit statusUpdateMessage("OptionDialog rejected", 3000);
     }
 }
+
+    void MainWindow::on_startStopVRButton_toggled(bool checked)
+    {
+        if (checked) 
+        {
+            VRRenderThread VRRenderThread(MainWindow);
+        }
+    }
+

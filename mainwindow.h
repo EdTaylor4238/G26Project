@@ -23,6 +23,7 @@ class MainWindow : public QMainWindow
      void handleButton(); 
      void handleButton2();
      void handleTreeClicked(const QModelIndex& index);
+     void startStopVRButton();
      void on_actionOpen_File_triggered();
      void handleOptionDialog();  // Add this slot
      void on_actionItem_Options_triggered();
@@ -35,6 +36,9 @@ signals:
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private slots:
+    void on_startStopVRButton_toggled(bool checked);
 
 private:
     ModelPartList* partList;

@@ -850,4 +850,6 @@ _deps
 *.cmake
 *.ini
 *.nsi
- 
+
+openVR/
+icons/
