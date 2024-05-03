@@ -25,6 +25,7 @@ ModelPart::ModelPart(const QList<QVariant>& data, ModelPart* parent)
     : m_itemData(data), m_parentItem(parent) {
 
     /* You probably want to give the item a default colour */
+    stlReader = nullptr;
 }
 
 
@@ -165,12 +166,12 @@ void ModelPart::loadSTL(QString fileName) {
      // The mapper is responsible for pushing the geometry into the graphics
    // library. It may also do color mapping, if scalars or other attributes are
    // defined.
-     file = vtkSmartPointer<vtkSTLReader>::New();
-     file->SetFileName(fileName.toStdString().c_str());
-     file->Update();
+     stlReader = vtkSmartPointer<vtkSTLReader>::New();
+     stlReader->SetFileName(fileName.toStdString().c_str());
+     stlReader->Update();
      /* 2. Initialise the part's vtkMapper */
     vtkNew<vtkPolyDataMapper> mapper;
-    mapper->SetInputConnection(file->GetOutputPort());
+    mapper->SetInputConnection(stlReader->GetOutputPort());
      /* 3. Initialise the part's vtkActor and link to the mapper */
     actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);

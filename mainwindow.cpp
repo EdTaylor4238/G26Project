@@ -28,15 +28,30 @@ MainWindow::MainWindow(QWidget *parent)
     ui->treeView->setModel(this->partList);
 
     /* This needs adding to MainWindow constructor */
-/* Link a render window with the Qt widget */
+    /* Link a render window with the Qt widget */
     renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     ui->VTKwidget->setRenderWindow(renderWindow);
 
     /* Add a renderer */
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow->AddRenderer(renderer);
+    // **Create temporary cylinder geometry (replace with CAD model loading later)**
+    vtkNew<vtkCylinderSource> cylinder; // Create a cylinder source object
+    cylinder->SetResolution(8);         // Set the number of facets (sides)
 
-    //renderer->AddActor(fileActor);
+    // Create mapper for cylinder
+    vtkNew<vtkPolyDataMapper> cylinderMapper;
+    cylinderMapper->SetInputConnection(cylinder->GetOutputPort());  // Connect the cylinder source to the mapper
+
+    // Create actor for cylinder with color and rotation
+    vtkNew<vtkActor> cylinderActor;
+    cylinderActor->SetMapper(cylinderMapper);                        // Set the mapper for the actor
+    cylinderActor->GetProperty()->SetColor(1.0, 0.0, 0.35);            // Set the color to red
+    cylinderActor->RotateX(30.0);                                      // Rotate around X-axis
+    cylinderActor->RotateY(-45.0);                                     // Rotate around Y-axis
+
+    // Add actor to renderer
+    renderer->AddActor(cylinderActor);
 
     /* Reset Camera (probably needs to go in its own function that is called whenever
     model is changed) */
