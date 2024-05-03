@@ -29,6 +29,7 @@ public slots :
     void on_actionItem_Options_triggered();
     void updateRender();
     void updateRenderFromTree(const QModelIndex& index);
+    void on_lightingSlider_sliderMoved(int position);
 
 signals:
     void statusUpdateMessage(const QString& message, int timeout);

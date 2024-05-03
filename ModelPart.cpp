@@ -106,7 +106,10 @@ void ModelPart::setColour(const unsigned char R, const unsigned char G, const un
 
     // You may want to update the color in your rendering system (e.g., VTK) here
     // Example: set the color of the VTK actor
-    //actor->GetProperty()->SetColor(R / 255.0, G / 255.0, B / 255.0);
+   
+    //selectedIndex->GetProperty()->SetColor(getColourR, getColourG, getColourB);
+    //QModelIndex selectedIndex = ui->treeView->currentIndex();
+    //ModelPart* selectedItem = static_cast<ModelPart*>(selectedIndex.internalPointer());
 }
 
 

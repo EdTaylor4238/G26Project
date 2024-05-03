@@ -207,6 +207,7 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
         renderer->ResetCamera();
         renderer->Render();
     }
+
     void MainWindow::updateRenderFromTree(const QModelIndex& index) {
         if (index.isValid()) {
             ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
@@ -305,5 +306,12 @@ void MainWindow::on_actionItem_Options_triggered()
     else {
         emit statusUpdateMessage("OptionDialog rejected", 3000);
     }
+}
+
+
+void MainWindow::on_lightingSlider_sliderMoved(int position)
+{
+    //actor setColour(RGB += sliderValue
+    //limitcolourvalues()l
 }
 
