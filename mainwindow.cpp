@@ -188,7 +188,7 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
 
 			updateRenderFromTree(partList->index(i, 0, QModelIndex()));
 		}
-      //  updateRenderFromTree(partList->index(0, 0, QModelIndex()));
+      updateRenderFromTree(partList->index(0, 0, QModelIndex()));
         renderer->ResetCamera();
         renderer->Render();
     }

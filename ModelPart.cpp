@@ -105,7 +105,7 @@ void ModelPart::setColour(const unsigned char R, const unsigned char G, const un
 
     // You may want to update the color in your rendering system (e.g., VTK) here
     // Example: set the color of the VTK actor
-    // actor->GetProperty()->SetColor(R / 255.0, G / 255.0, B / 255.0);
+    //actor->GetProperty()->SetColor(R / 255.0, G / 255.0, B / 255.0);
 }
 
 
@@ -174,12 +174,11 @@ void ModelPart::loadSTL(QString fileName) {
      /* 3. Initialise the part's vtkActor and link to the mapper */
     actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);
-
 }
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
     /* This is a placeholder function that will be used in the next worksheet */
-    actor = vtkSmartPointer<vtkActor>::New();
+    
     /* Needs to return a smart pointer to the vtkActor to allow
      * part to be rendered.
      */
@@ -195,19 +194,18 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
 
 
           /* 1. Create new mapper */
-         vtkNew<vtkPolyDataMapper> vrMapper;
-         vtkSmartPointer<vtkActor> vrActor;
+        
           /* 2. Create new actor and link to mapper */
-         vrActor->SetMapper(vrMapper);
+         
           /* 3. Link the vtkProperties of the original actor to the new actor. This means
            *    if you change properties of the original part (colour, position, etc), the
              changes will be reflected in the GUI AND VR rendering.*/
                 
-         vrActor->SetProperty(actor->GetProperty());
+         
             // See the vtkActor documentation, particularly the GetProperty() and SetProperty() functions.
 
            /* The new vtkActor pointer must be returned here */
-           return vrActor;
+           return nullptr;
        }
 
      //VTKLighting
