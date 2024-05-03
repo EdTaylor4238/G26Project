@@ -110,7 +110,9 @@ void MainWindow::handleButton2()
 {
     // Emit the statusUpdateMessage signal to update the status bar
     ui->treeView->clearSelection();
-    emit statusUpdateMessage("Second button was clicked", 3000); // 3000 milliseconds timeout
+    emit statusUpdateMessage("VR", 300); // 3000 milliseconds timeout
+    VRRenderer = new VRRenderThread();
+    VRRenderer->start();
 }
 
 void MainWindow::handleTreeClicked(const QModelIndex& index) {
@@ -124,10 +126,10 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
     emit statusUpdateMessage("Selected item: " + itemName, 3000);
 }
 
-void MainWindow::startStopVRButton()
-{
-    emit statusUpdateMessage("VR button clicked", 100); // 100 milliseconds timeout
-}
+//void MainWindow::startStopVRButton()
+//{
+//    emit statusUpdateMessage("VR button clicked", 100); // 100 milliseconds timeout
+//}
 
 // Slot function added to MainWindow.cpp
     void MainWindow::on_actionOpen_File_triggered() {
@@ -289,12 +291,4 @@ void MainWindow::on_actionItem_Options_triggered()
         emit statusUpdateMessage("OptionDialog rejected", 3000);
     }
 }
-
-    void MainWindow::on_startStopVRButton_toggled(bool checked)
-    {
-        if (checked) 
-        {
-            VRRenderThread VRRenderThread(MainWindow);
-        }
-    }
 

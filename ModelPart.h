@@ -150,7 +150,6 @@ private:
      vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
 };
 
-
 #endif
 
 //end Modelpart.h

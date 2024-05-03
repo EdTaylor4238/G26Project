@@ -179,7 +179,7 @@ void ModelPart::loadSTL(QString fileName) {
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
     /* This is a placeholder function that will be used in the next worksheet */
-
+    actor = vtkSmartPointer<vtkActor>::New();
     /* Needs to return a smart pointer to the vtkActor to allow
      * part to be rendered.
      */
@@ -188,32 +188,26 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
 
      vtkActor* ModelPart::getNewActor() {
          /* This is a placeholder function that will be used in the next worksheet.
-          *
           * The default mapper/actor combination can only be used to render the part in
           * the GUI, it CANNOT also be used to render the part in VR. This means you need
           * to create a second mapper/actor combination for use in VR - that is the role
           * of this function. */
 
 
-         // /* 1. Create new mapper */
-         //vtkNew<vtkPolyDataMapper> newMapper;
-         //vtkSmartPointer<vtkActor> newActor;
-         // /* 2. Create new actor and link to mapper */
-         //vtkActor *newActor = vtkSmartPointer<vtkActor>::New();
-         //newActor->SetMapper(newMapper);
-         // /* 3. Link the vtkProperties of the original actor to the new actor. This means
-         //  *    if you change properties of the original part (colour, position, etc), the
-         //    changes will be reflected in the GUI AND VR rendering.*/
-         //       
-         //newActor->SetProperty(actor->GetProperty());
-         //   // See the vtkActor documentation, particularly the GetProperty() and SetProperty()
-         // //    functions.
-         //  
-
+          /* 1. Create new mapper */
+         vtkNew<vtkPolyDataMapper> vrMapper;
+         vtkSmartPointer<vtkActor> vrActor;
+          /* 2. Create new actor and link to mapper */
+         vrActor->SetMapper(vrMapper);
+          /* 3. Link the vtkProperties of the original actor to the new actor. This means
+           *    if you change properties of the original part (colour, position, etc), the
+             changes will be reflected in the GUI AND VR rendering.*/
+                
+         vrActor->SetProperty(actor->GetProperty());
+            // See the vtkActor documentation, particularly the GetProperty() and SetProperty() functions.
 
            /* The new vtkActor pointer must be returned here */
-           return newActor;
-
+           return vrActor;
        }
 
-       //end Modelpart.cpp
+     //VTKLighting

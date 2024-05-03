@@ -27,6 +27,7 @@
 
 
 
+
 /* Note that this class inherits from the Qt class QThread which allows it to be a parallel thread
  * to the main() thread, and also from vtkCommand which allows it to act as a "callback" for the
  * vtkRenderWindowInteractor. This callback functionallity means that once the renderWindowInteractor
