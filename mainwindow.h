@@ -9,6 +9,7 @@
 #include <vtkRenderer.h>
 #include <vtkGenericOpenGLRenderWindow.h>
 #include "VRRenderThread.h"
+#include <vtkLight.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,8 +30,8 @@ public slots :
     void on_actionItem_Options_triggered();
     void updateRender();
     void updateRenderFromTree(const QModelIndex& index);
-    void on_lightingSlider_sliderMoved(int position);
-
+    //void on_lightingSlider_valueChanged(float value);
+    void createAddLight();
 signals:
     void statusUpdateMessage(const QString& message, int timeout);
 
@@ -43,6 +44,7 @@ private slots:
 private:
     ModelPartList* partList;
     vtkSmartPointer<vtkRenderer> renderer;
+    vtkSmartPointer<vtkRenderer> light;
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
     VRRenderThread *VRRenderer;
 

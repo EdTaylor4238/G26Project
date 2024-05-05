@@ -27,7 +27,6 @@
    #include <vtkActor.h>
    #include <vtkSTLReader.h>
    #include <vtkColor.h>
-#include "mainwindow.h"
 
 class ModelPart {
 public:

@@ -13,9 +13,10 @@
 #include "vtkPolyDataMapper.h"
 #include "vtkCamera.h"
 #include <vtkRenderer.h>
+#include <vtkLight.h>
 
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -27,14 +28,24 @@ MainWindow::MainWindow(QWidget *parent)
     /* Link it to the tree view in the GUI */
     ui->treeView->setModel(this->partList);
 
-    /* This needs adding to MainWindow constructor */
+    // Create and configure a scene light
+// ... Add actors here (not shown)
+
+// Render the scene
+ /* This needs adding to MainWindow constructor */
     /* Link a render window with the Qt widget */
-    renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-    ui->VTKwidget->setRenderWindow(renderWindow);
+renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+ui->VTKwidget->setRenderWindow(renderWindow);
+
+// Add light to renderer after rendering (important for VTK)
 
     /* Add a renderer */
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow->AddRenderer(renderer);
+
+    createAddLight();
+
+
     // **Create temporary cylinder geometry (replace with CAD model loading later)**
     vtkNew<vtkCylinderSource> cylinder; // Create a cylinder source object
     cylinder->SetResolution(8);         // Set the number of facets (sides)
@@ -59,9 +70,9 @@ MainWindow::MainWindow(QWidget *parent)
     renderer->GetActiveCamera()->Azimuth(30);
     renderer->GetActiveCamera()->Elevation(30);
     renderer->ResetCameraClippingRange();
-    
+
     // Connect the statusUpdateMessage signal to the showMessage slot of the status bar
-    connect(this, &MainWindow::statusUpdateMessage,ui->statusbar, &QStatusBar::showMessage);
+    connect(this, &MainWindow::statusUpdateMessage, ui->statusbar, &QStatusBar::showMessage);
     // Connect the first button to handleButton
     connect(ui->pushButton, &QPushButton::released, this, &MainWindow::handleButton);
     // Connect the second button to handleButton2
@@ -114,6 +125,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
 void MainWindow::handleButton()
 {
     // Emit the statusUpdateMessage signal to update the status bar
@@ -131,7 +143,7 @@ void MainWindow::handleButton2()
 }
 
 void MainWindow::handleTreeClicked(const QModelIndex& index) {
-    
+
     /* Get a pointer to the item from the index */
     ModelPart* selectedItem = static_cast<ModelPart*>(index.internalPointer());
 
@@ -147,7 +159,7 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
 //}
 
 // Slot function added to MainWindow.cpp
-    void MainWindow::on_actionOpen_File_triggered() {
+void MainWindow::on_actionOpen_File_triggered() {
     QStringList fileList = QFileDialog::getOpenFileNames(
         this,
         tr("Open File"),
@@ -166,7 +178,7 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
     /* Create strings for both data columns */
        /* Manually create a model tree - there are much better and more flexible ways of doing this,
        e.g., with nested functions. This is just a quick example as a starting point. */
-    //ModelPart* rootItem = this->partList->getRootItem();
+       //ModelPart* rootItem = this->partList->getRootItem();
 
 
     QString visible("true");
@@ -181,7 +193,7 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
 
     for (int n = 0; n < fileList.length(); n++)
     {
-        QList<QVariant> data{ fileList[n], visible};
+        QList<QVariant> data{ fileList[n], visible };
         QModelIndex parent;
         QModelIndex newIndex = partList->appendChild(parent, data);
 
@@ -192,45 +204,45 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
 
         childItem->loadSTL(fileList[n]);
         updateRender();
-        emit statusUpdateMessage((n+1) + "/" + (int)fileList.length(), 10);
+        emit statusUpdateMessage((n + 1) + "/" + (int)fileList.length(), 10);
     }
     emit statusUpdateMessage("Done :)", 10);
 }
 
-    void MainWindow::updateRender() {
-        renderer->RemoveAllViewProps();
-        for (int i = 0; i < partList->rowCount(QModelIndex()); i++) {
+void MainWindow::updateRender() {
+    renderer->RemoveAllViewProps();
+    for (int i = 0; i < partList->rowCount(QModelIndex()); i++) {
 
-			updateRenderFromTree(partList->index(i, 0, QModelIndex()));
-		}
-      updateRenderFromTree(partList->index(0, 0, QModelIndex()));
-        renderer->ResetCamera();
-        renderer->Render();
+        updateRenderFromTree(partList->index(i, 0, QModelIndex()));
     }
-
-    void MainWindow::updateRenderFromTree(const QModelIndex& index) {
-        if (index.isValid()) {
-            ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
-            /* Retrieve actor from selected part and add to renderer */
-            vtkSmartPointer<vtkActor> actor = selectedPart->getActor();
-            if (actor) {
-                renderer->AddActor(actor);
-                emit statusUpdateMessage("Added actor to renderer", 3000);
-            }
-        }
-        /* Check to see if this part has any children */
-        if (!partList->hasChildren(index) || (index.flags() & Qt::ItemNeverHasChildren)) {
-            return;
-        }
-
-        /* Loop through children and add their actors */
-        int rows = partList->rowCount(index);
-        for (int i = 0; i < rows; i++) {
-            updateRenderFromTree(partList->index(i, 0, index));
+    updateRenderFromTree(partList->index(0, 0, QModelIndex()));
+    renderer->ResetCamera();
+    renderer->Render();
+    createAddLight();
+}
+void MainWindow::updateRenderFromTree(const QModelIndex& index) {
+    if (index.isValid()) {
+        ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
+        /* Retrieve actor from selected part and add to renderer */
+        vtkSmartPointer<vtkActor> actor = selectedPart->getActor();
+        if (actor) {
+            renderer->AddActor(actor);
+            emit statusUpdateMessage("Added actor to renderer", 3000);
         }
     }
+    /* Check to see if this part has any children */
+    if (!partList->hasChildren(index) || (index.flags() & Qt::ItemNeverHasChildren)) {
+        return;
+    }
+
+    /* Loop through children and add their actors */
+    int rows = partList->rowCount(index);
+    for (int i = 0; i < rows; i++) {
+        updateRenderFromTree(partList->index(i, 0, index));
+    }
+}
 void MainWindow::on_actionItem_Options_triggered()
-         {
+{
     OptionDialog dialog(this);
 
     QModelIndex selectedIndex = ui->treeView->currentIndex();
@@ -269,7 +281,7 @@ void MainWindow::on_actionItem_Options_triggered()
         emit statusUpdateMessage("OptionDialog rejected", 3000);
     }
 }
-    void MainWindow::handleOptionDialog()
+void MainWindow::handleOptionDialog()
 {
     OptionDialog dialog(this);
     QModelIndex selectedIndex = ui->treeView->currentIndex();
@@ -308,10 +320,32 @@ void MainWindow::on_actionItem_Options_triggered()
     }
 }
 
+//void MainWindow::on_lightingSlider_sliderMoved(int position)
+//{
+//    
+//
+//
+//
+//
+//    //light->SetIntensity(0.5);
+//}
 
-void MainWindow::on_lightingSlider_sliderMoved(int position)
+void MainWindow::createAddLight()
 {
-    //actor setColour(RGB += sliderValue
-    //limitcolourvalues()l
+    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+    light->SetLightTypeToSceneLight();
+
+    light->SetPosition(5, 5, 15);
+    light->SetPositional(true);
+
+    light->SetConeAngle(10);
+    light->SetFocalPoint(0, 0, 0);
+
+    light->SetDiffuseColor(1, 1, 1);
+    light->SetAmbientColor(1, 1, 1);
+    light->SetSpecularColor(1, 1, 1);
+    light->SetIntensity(0.9999);
+
+    renderer->AddLight(light);
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>319</height>
+    <width>625</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,6 +85,20 @@
       </item>
      </layout>
     </item>
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Lighting</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="lightingSlider">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -92,7 +106,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>471</width>
+     <width>625</width>
      <height>25</height>
     </rect>
    </property>
