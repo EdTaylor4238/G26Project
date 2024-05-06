@@ -54,19 +54,6 @@
      <string>Name:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="Redlabel">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>50</y>
-      <width>31</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Red</string>
-    </property>
-   </widget>
    <widget class="QCheckBox" name="checkBox">
     <property name="geometry">
      <rect>
@@ -80,71 +67,6 @@
      <string>isVisible?</string>
     </property>
    </widget>
-   <widget class="QLabel" name="Bluelabel">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>110</y>
-      <width>37</width>
-      <height>12</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Blue</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="Greenlabel">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>80</y>
-      <width>37</width>
-      <height>12</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Green</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="RedSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>50</y>
-      <width>42</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="BlueSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>110</y>
-      <width>42</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="GreenSpinBox">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>80</y>
-      <width>42</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>255</number>
-    </property>
-   </widget>
    <widget class="QLineEdit" name="lineEdit">
     <property name="geometry">
      <rect>
@@ -153,6 +75,19 @@
       <width>113</width>
       <height>20</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="updateModelPartColor">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>50</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Change Color</string>
     </property>
    </widget>
   </widget>

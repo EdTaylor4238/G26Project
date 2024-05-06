@@ -27,6 +27,7 @@
    #include <vtkActor.h>
    #include <vtkSTLReader.h>
    #include <vtkColor.h>
+#include <qcolordialog.h>
 
 class ModelPart {
 public:
@@ -92,15 +93,20 @@ public:
       */
     int row() const;
 
-
     /** Set colour
       * (0-255 RGB values as ints)
       */
     unsigned char m_colorR; /**< Red component of the color */
     unsigned char m_colorG; /**< Green component of the color */
     unsigned char m_colorB; /**< Blue component of the color */
-    void setColour(const unsigned char R, const unsigned char G, const unsigned char B);
+    QColor color;
+    void setColor(QColor clr);
+    QColor getColor();
+
+    QString Name;
     void setName(QString name);
+    const QString getName(void);
+
 
     unsigned char getColourR();
     unsigned char getColourG();
@@ -114,12 +120,14 @@ public:
     /** Get visible flag
       * @return visible flag as boolean
       */
-    bool visible() const;
 
     /** Load STL file
       * @param fileName
       */
     void loadSTL(QString fileName);
+
+ 
+    bool getVisibility(void);
 
     /** Return actor
       * @return pointer to default actor for GUI rendering
@@ -147,7 +155,7 @@ private:
      vtkSmartPointer<vtkSTLReader>               stlReader;               /**< Datafile from which part loaded */
      vtkSmartPointer<vtkMapper>                  mapper;             /**< Mapper for rendering */
      vtkSmartPointer<vtkActor>                   actor;              /**< Actor for rendering */
-     vtkColor3<unsigned char>                    colour;             /**< User defineable colour */
+     //vtkColor3<unsigned char>                    color;             /**< User defineable colour */
 };
 
 #endif

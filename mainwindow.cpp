@@ -43,7 +43,7 @@ ui->VTKwidget->setRenderWindow(renderWindow);
     renderer = vtkSmartPointer<vtkRenderer>::New();
     renderWindow->AddRenderer(renderer);
 
-    createAddLight();
+    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
 
 
     // **Create temporary cylinder geometry (replace with CAD model loading later)**
@@ -81,8 +81,9 @@ ui->VTKwidget->setRenderWindow(renderWindow);
     connect(ui->treeView, &QTreeView::clicked, this, &MainWindow::handleTreeClicked);
     // Assuming you have a tree view named ui->treeView
     connect(ui->treeView, &QTreeView::clicked, this, &MainWindow::handleOptionDialog);
+    connect(ui->lightingSlider, &QAbstractSlider::sliderMoved, this, &MainWindow::on_lightingSlider_sliderMoved);
 
-    connect(ui->treeView, &QTreeView::clicked, this, &MainWindow::on_actionItem_Options_triggered);
+    //connect(ui->treeView, &QTreeView::clicked, this, &MainWindow::on_actionItem_Options_triggered);
 
     /* Create / allocate the ModelList */
     this->partList = new ModelPartList("Parts List");
@@ -153,11 +154,6 @@ void MainWindow::handleTreeClicked(const QModelIndex& index) {
     emit statusUpdateMessage("Selected item: " + itemName, 3000);
 }
 
-//void MainWindow::startStopVRButton()
-//{
-//    emit statusUpdateMessage("VR button clicked", 100); // 100 milliseconds timeout
-//}
-
 // Slot function added to MainWindow.cpp
 void MainWindow::on_actionOpen_File_triggered() {
     QStringList fileList = QFileDialog::getOpenFileNames(
@@ -218,7 +214,6 @@ void MainWindow::updateRender() {
     updateRenderFromTree(partList->index(0, 0, QModelIndex()));
     renderer->ResetCamera();
     renderer->Render();
-    createAddLight();
 }
 void MainWindow::updateRenderFromTree(const QModelIndex& index) {
     if (index.isValid()) {
@@ -243,43 +238,43 @@ void MainWindow::updateRenderFromTree(const QModelIndex& index) {
 }
 void MainWindow::on_actionItem_Options_triggered()
 {
-    OptionDialog dialog(this);
+    //OptionDialog dialog(this);
 
-    QModelIndex selectedIndex = ui->treeView->currentIndex();
+    //QModelIndex selectedIndex = ui->treeView->currentIndex();
 
-    // Ensure the index is valid before proceeding
-    if (selectedIndex.isValid()) {
-        // Get the corresponding ModelPart
-        ModelPart* selectedItem = static_cast<ModelPart*>(selectedIndex.internalPointer());
+    //// Ensure the index is valid before proceeding
+    //if (selectedIndex.isValid()) {
+    //    // Get the corresponding ModelPart
+    //    ModelPart* selectedItem = static_cast<ModelPart*>(selectedIndex.internalPointer());
 
-        // Pass the current values to the OptionDialog constructor
-        dialog.setProperties(selectedItem->visible(), selectedItem->getColourR(), selectedItem->getColourG(), selectedItem->getColourB(), selectedItem->data(0).toString());
+    //    // Pass the current values to the OptionDialog constructor
+    //    dialog.setProperties(selectedItem->visible(), selectedItem->getColourR(), selectedItem->getColourG(), selectedItem->getColourB(), selectedItem->data(0).toString());
 
-        if (dialog.exec() == QDialog::Accepted) {
-            // Set the visibility of the item based on dialog.isVisible (true for visible, false for invisible)
-            selectedItem->setVisible(dialog.isVisible);
-            selectedItem->setColour(dialog.red, dialog.green, dialog.blue);
-            selectedItem->setName(dialog.lineEditText);
-            // You may need to update the view after changing the data
-            ui->treeView->update();
+    //    if (dialog.exec() == QDialog::Accepted) {
+    //        // Set the visibility of the item based on dialog.isVisible (true for visible, false for invisible)
+    //        selectedItem->setVisible(dialog.isVisible);
+    //        //selectedItem->setColour(dialog.red, dialog.green, dialog.blue);
+    //        selectedItem->setName(dialog.lineEditText);
+    //        // You may need to update the view after changing the data
+    //        ui->treeView->update();
 
-            QString boolString = selectedItem->visible() ? "true" : "false";
-            QString statusMessage = QString("Visibility: %1, Red: %2, Green: %3, Blue: %4")
-                .arg(boolString)
-                .arg(dialog.red)
-                .arg(dialog.green)
-                .arg(dialog.blue);
+    //        QString boolString = selectedItem->visible() ? "true" : "false";
+    //        QString statusMessage = QString("Visibility: %1, Red: %2, Green: %3, Blue: %4")
+    //            .arg(boolString)
+    //            .arg(dialog.red)
+    //            .arg(dialog.green)
+    //            .arg(dialog.blue);
 
-            emit statusUpdateMessage(statusMessage, 3000);
-        }
-        else {
-            // Handle the case where the selected index is not valid
-            emit statusUpdateMessage("No item selected in the tree view", 3000);
-        }
-    }
-    else {
-        emit statusUpdateMessage("OptionDialog rejected", 3000);
-    }
+    //        emit statusUpdateMessage(statusMessage, 3000);
+    //    }
+    //    else {
+    //        // Handle the case where the selected index is not valid
+    //        emit statusUpdateMessage("No item selected in the tree view", 3000);
+    //    }
+    //}
+    //else {
+    //    emit statusUpdateMessage("OptionDialog rejected", 3000);
+    //}
 }
 void MainWindow::handleOptionDialog()
 {
@@ -291,17 +286,17 @@ void MainWindow::handleOptionDialog()
         ModelPart* selectedItem = static_cast<ModelPart*>(selectedIndex.internalPointer());
 
         // Pass the current values to the OptionDialog constructor
-        dialog.setProperties(selectedItem->visible(), selectedItem->getColourR(), selectedItem->getColourG(), selectedItem->getColourB(), selectedItem->data(0).toString());
+        dialog.setProperties(selectedItem->getVisibility(), selectedItem->getColourR(), selectedItem->getColourG(), selectedItem->getColourB(), selectedItem->data(0).toString());
 
         if (dialog.exec() == QDialog::Accepted) {
             // Set the visibility of the item based on dialog.isVisible (true for visible, false for invisible)
             selectedItem->setVisible(dialog.isVisible);
-            selectedItem->setColour(dialog.red, dialog.green, dialog.blue);
+            //selectedItem->setColor(dialog.red);
             selectedItem->setName(dialog.lineEditText);
             // You may need to update the view after changing the data
             ui->treeView->update();
 
-            QString boolString = selectedItem->visible() ? "true" : "false";
+            QString boolString = selectedItem->getVisibility() ? "true" : "false";
             QString statusMessage = QString("Visibility: %1, Red: %2, Green: %3, Blue: %4")
                 .arg(boolString)
                 .arg(dialog.red)
@@ -320,32 +315,13 @@ void MainWindow::handleOptionDialog()
     }
 }
 
-//void MainWindow::on_lightingSlider_sliderMoved(int position)
-//{
-//    
-//
-//
-//
-//
-//    //light->SetIntensity(0.5);
-//}
-
-void MainWindow::createAddLight()
+void MainWindow::on_lightingSlider_sliderMoved(float position)
 {
-    vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
-    light->SetLightTypeToSceneLight();
-
-    light->SetPosition(5, 5, 15);
-    light->SetPositional(true);
-
-    light->SetConeAngle(10);
-    light->SetFocalPoint(0, 0, 0);
-
-    light->SetDiffuseColor(1, 1, 1);
-    light->SetAmbientColor(1, 1, 1);
-    light->SetSpecularColor(1, 1, 1);
-    light->SetIntensity(0.9999);
-
-    renderer->AddLight(light);
+    renderer->GetLights()->InitTraversal();
+    vtkLight* light = renderer->GetLights()->GetNextItem();
+    light->SetIntensity(position / 100);
 }
+
+
+
 

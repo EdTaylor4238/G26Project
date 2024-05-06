@@ -12,6 +12,7 @@
 #include <vtkActor.h>
 #include <vtkSTLReader.h>
 #include <vtkPolyDataMapper.h>
+#include <vtkColor.h>
 
   /* Commented out for now, will be uncommented later when you have
    * installed the VTK library
@@ -99,17 +100,32 @@ int ModelPart::row() const {
     return 0;
 }
 
-void ModelPart::setColour(const unsigned char R, const unsigned char G, const unsigned char B) {
-    m_colorR = R;
-    m_colorG = G;
-    m_colorB = B;
+//void ModelPart::setColour(const unsigned char R, const unsigned char G, const unsigned char B) {
+//    m_colorR = R;
+//    m_colorG = G;
+//    m_colorB = B;
+//
+//    // You may want to update the color in your rendering system (e.g., VTK) here
+//    // Example: set the color of the VTK actor
+//   
+//    this->GetProperty()->SetColor(getColourR, getColourG, getColourB);actor->GetProperty()->SetColor(0, 0, 1);
+//}
 
-    // You may want to update the color in your rendering system (e.g., VTK) here
-    // Example: set the color of the VTK actor
-   
-    //selectedIndex->GetProperty()->SetColor(getColourR, getColourG, getColourB);
-    //QModelIndex selectedIndex = ui->treeView->currentIndex();
-    //ModelPart* selectedItem = static_cast<ModelPart*>(selectedIndex.internalPointer());
+void ModelPart::setColor(QColor clr) {
+    color = clr;
+}
+
+bool ModelPart::getVisibility(void)
+{
+    return isVisible;
+}
+
+QColor ModelPart::getColor(void)
+{
+    return color;
+}
+const QString ModelPart::getName(void) {
+    return Name;
 }
 
 
@@ -149,11 +165,6 @@ void ModelPart::setVisible(bool isVisible)
     }
 }
 
-bool ModelPart::visible() const
-{
-    /* Return the visibility status */
-    return isVisible;
-}
 
 void ModelPart::setName(QString name)
 {

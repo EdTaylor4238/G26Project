@@ -2,6 +2,8 @@
 #define OPTIONDIALOG_H
 
 #include <QDialog>
+#include "ModelPart.h"
+#include "ui_optiondialog.h"
 
 namespace Ui {
 class OptionDialog;
@@ -18,24 +20,31 @@ public:
     int red, green, blue;
     QString lineEditText;
     void setProperties(bool isVisible, int red, int green, int blue, const QString& lineEditText);
+    void set_ptr(ModelPart* Pointer);
 
     // Declaration for the accept function
-    virtual void accept() override;
+    //virtual void accept() override;
 
 public slots:
     void onCheckBoxToggled();
-    void onRedSpinBoxValueChanged(int value);
-    void onGreenSpinBoxValueChanged(int value);
-    void onBlueSpinBoxValueChanged(int value);
-    //void onLineEditTextChanged(const QString& text);
     void on_lineEdit_textChanged(const QString& arg1);
+    void updateModelPartName(const QString& name);
+    void updateModelPartColor();
+    void updateModelPartVisibility(int state);
+    void saveSettings();
+    void loadSettings();
+
+
 
 signals:
-
+    void settingsSaved();
 private slots:
 
 private:
-    Ui::OptionDialog* ui;
+    Ui::OptionDialog *ui;
+    ModelPart *ptr = nullptr;
+    QString Name = "Enter:";
+    QColor color;
 };
 
 #endif // OPTIONDIALOG_H

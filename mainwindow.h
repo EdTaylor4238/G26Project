@@ -10,6 +10,7 @@
 #include <vtkGenericOpenGLRenderWindow.h>
 #include "VRRenderThread.h"
 #include <vtkLight.h>
+#include <vtkLightCollection.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,8 +31,7 @@ public slots :
     void on_actionItem_Options_triggered();
     void updateRender();
     void updateRenderFromTree(const QModelIndex& index);
-    //void on_lightingSlider_valueChanged(float value);
-    void createAddLight();
+    void on_lightingSlider_sliderMoved(float position);
 signals:
     void statusUpdateMessage(const QString& message, int timeout);
 
