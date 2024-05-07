@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
 	optiondialog.ui
 	optiondialog.cpp
 	optiondialog.h
+	VRRenderThread.cpp
+	VRRenderThread.h
 	
 )
 
@@ -34,8 +36,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         optiondialog.h optiondialog.cpp optiondialog.ui
-        VRRenderThread.cpp
-        VRRenderThread.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Base_Project APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -69,6 +69,14 @@ set_target_properties(Base_Project PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
+)
+
+add_custom_target(Skybox ALL)
+add_custom_command(TARGET Skybox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_SOURCE_DIR}/skybox.hdr
+    ${CMAKE_BINARY_DIR}/skybox.hdr
 )
 
 include(GNUInstallDirs)
