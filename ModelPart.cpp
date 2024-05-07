@@ -112,50 +112,26 @@ int ModelPart::row() const {
 //}
 
 void ModelPart::setColor(QColor clr) {
-    color = clr;
+    colour = clr;
 }
 
 bool ModelPart::getVisibility(void)
 {
-    return isVisible;
+    return visibility;
 }
 
 QColor ModelPart::getColor(void)
 {
-    return color;
+    return colour;
 }
 const QString ModelPart::getName(void) {
-    return Name;
+    return name;
 }
-
-
-unsigned char ModelPart::getColourR() {
-    /* This is a placeholder function that will be used in the next worksheet */
-
-    /* As the name suggests ... */
-    return m_colorR;   // needs updating
-}
-
-unsigned char ModelPart::getColourG() {
-    /* This is a placeholder function that will be used in the next worksheet */
-
-    /* As the name suggests ... */
-    return m_colorG;   // needs updating
-}
-
-
-unsigned char ModelPart::getColourB() {
-    /* This is a placeholder function that will be used in the next worksheet */
-
-    /* As the name suggests ... */
-    return m_colorB;   // needs updating
-}
-
 
 void ModelPart::setVisible(bool isVisible)
 {
     /* Set the visibility based on the input value */
-    this->isVisible = isVisible;
+    this->visibility = isVisible;
 
     if (isVisible) {
         set(1, "true");
@@ -192,11 +168,7 @@ void ModelPart::loadSTL(QString fileName) {
 }
 
 vtkSmartPointer<vtkActor> ModelPart::getActor() {
-    /* This is a placeholder function that will be used in the next worksheet */
     
-    /* Needs to return a smart pointer to the vtkActor to allow
-     * part to be rendered.
-     */
     return actor;
     }
 

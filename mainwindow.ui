@@ -57,14 +57,7 @@
         <item>
          <widget class="QPushButton" name="pushButton2">
           <property name="text">
-           <string>Change Colour</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="changeColorButton">
-          <property name="text">
-           <string>Change Color</string>
+           <string>Start / Stop VR</string>
           </property>
          </widget>
         </item>
