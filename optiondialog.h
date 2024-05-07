@@ -4,6 +4,9 @@
 #include <QDialog>
 #include "ModelPart.h"
 #include "ui_optiondialog.h"
+#include <QColorDialog> 
+#include "mainwindow.h"
+
 
 namespace Ui {
 class OptionDialog;
@@ -16,11 +19,12 @@ class OptionDialog : public QDialog
 public:
     explicit OptionDialog(QWidget *parent = nullptr);
     ~OptionDialog();
-    bool isVisible;
-    int red, green, blue;
     QString lineEditText;
-    void setProperties(bool isVisible, int red, int green, int blue, const QString& lineEditText);
-    void set_ptr(ModelPart* Pointer);
+    ModelPart* ptr;
+    QString Name = "Enter:";
+    QColor color;
+    bool isVisible = true;
+    void setProperties(ModelPart* Pointer, bool isVisible, const QString& lineEditText, const QColor& color);
 
     // Declaration for the accept function
     //virtual void accept() override;
@@ -42,9 +46,6 @@ private slots:
 
 private:
     Ui::OptionDialog *ui;
-    ModelPart *ptr = nullptr;
-    QString Name = "Enter:";
-    QColor color;
 };
 
 #endif // OPTIONDIALOG_H

@@ -236,46 +236,7 @@ void MainWindow::updateRenderFromTree(const QModelIndex& index) {
         updateRenderFromTree(partList->index(i, 0, index));
     }
 }
-void MainWindow::on_actionItem_Options_triggered()
-{
-    //OptionDialog dialog(this);
 
-    //QModelIndex selectedIndex = ui->treeView->currentIndex();
-
-    //// Ensure the index is valid before proceeding
-    //if (selectedIndex.isValid()) {
-    //    // Get the corresponding ModelPart
-    //    ModelPart* selectedItem = static_cast<ModelPart*>(selectedIndex.internalPointer());
-
-    //    // Pass the current values to the OptionDialog constructor
-    //    dialog.setProperties(selectedItem->visible(), selectedItem->getColourR(), selectedItem->getColourG(), selectedItem->getColourB(), selectedItem->data(0).toString());
-
-    //    if (dialog.exec() == QDialog::Accepted) {
-    //        // Set the visibility of the item based on dialog.isVisible (true for visible, false for invisible)
-    //        selectedItem->setVisible(dialog.isVisible);
-    //        //selectedItem->setColour(dialog.red, dialog.green, dialog.blue);
-    //        selectedItem->setName(dialog.lineEditText);
-    //        // You may need to update the view after changing the data
-    //        ui->treeView->update();
-
-    //        QString boolString = selectedItem->visible() ? "true" : "false";
-    //        QString statusMessage = QString("Visibility: %1, Red: %2, Green: %3, Blue: %4")
-    //            .arg(boolString)
-    //            .arg(dialog.red)
-    //            .arg(dialog.green)
-    //            .arg(dialog.blue);
-
-    //        emit statusUpdateMessage(statusMessage, 3000);
-    //    }
-    //    else {
-    //        // Handle the case where the selected index is not valid
-    //        emit statusUpdateMessage("No item selected in the tree view", 3000);
-    //    }
-    //}
-    //else {
-    //    emit statusUpdateMessage("OptionDialog rejected", 3000);
-    //}
-}
 void MainWindow::handleOptionDialog()
 {
     OptionDialog dialog(this);
@@ -286,22 +247,20 @@ void MainWindow::handleOptionDialog()
         ModelPart* selectedItem = static_cast<ModelPart*>(selectedIndex.internalPointer());
 
         // Pass the current values to the OptionDialog constructor
-        dialog.setProperties(selectedItem->getVisibility(), selectedItem->getColourR(), selectedItem->getColourG(), selectedItem->getColourB(), selectedItem->data(0).toString());
-
+        dialog.setProperties(selectedItem, selectedItem->getVisibility(), selectedItem->data(0).toString(), selectedItem->getColor());
+        dialog.saveSettings();
         if (dialog.exec() == QDialog::Accepted) {
             // Set the visibility of the item based on dialog.isVisible (true for visible, false for invisible)
             selectedItem->setVisible(dialog.isVisible);
-            //selectedItem->setColor(dialog.red);
+            selectedItem->setColor(dialog.color);
             selectedItem->setName(dialog.lineEditText);
-            // You may need to update the view after changing the data
-            ui->treeView->update();
 
             QString boolString = selectedItem->getVisibility() ? "true" : "false";
-            QString statusMessage = QString("Visibility: %1, Red: %2, Green: %3, Blue: %4")
-                .arg(boolString)
-                .arg(dialog.red)
-                .arg(dialog.green)
-                .arg(dialog.blue);
+            QString statusMessage = QString("Visibility: %1")
+                .arg(boolString);
+
+            // You may need to update the view after changing the data
+            ui->treeView->update();
 
             emit statusUpdateMessage(statusMessage, 3000);
         }
@@ -313,6 +272,7 @@ void MainWindow::handleOptionDialog()
     else {
         emit statusUpdateMessage("OptionDialog rejected", 3000);
     }
+    updateRender();
 }
 
 void MainWindow::on_lightingSlider_sliderMoved(float position)
@@ -321,7 +281,4 @@ void MainWindow::on_lightingSlider_sliderMoved(float position)
     vtkLight* light = renderer->GetLights()->GetNextItem();
     light->SetIntensity(position / 100);
 }
-
-
-
 

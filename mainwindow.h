@@ -27,8 +27,7 @@ public slots :
     void handleButton2();
     void handleTreeClicked(const QModelIndex& index);
     void on_actionOpen_File_triggered();
-    void handleOptionDialog();  // Add this slot
-    void on_actionItem_Options_triggered();
+    void handleOptionDialog();
     void updateRender();
     void updateRenderFromTree(const QModelIndex& index);
     void on_lightingSlider_sliderMoved(float position);
