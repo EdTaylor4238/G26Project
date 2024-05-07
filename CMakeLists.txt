@@ -93,3 +93,19 @@ add_custom_command(TARGET VRBindings
         ${CMAKE_BINARY_DIR}/
 )
 
+# Include CPack
+include(CPack)
+
+# Set CPack Generator based on platform
+if (WIN32)
+    set(CPACK_GENERATOR "NSIS")
+else()
+    set(CPACK_GENERATOR "ZIP")
+endif()
+
+# Install targets
+install(TARGETS WS6EX1
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
