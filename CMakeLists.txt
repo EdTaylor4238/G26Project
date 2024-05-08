@@ -80,6 +80,32 @@ add_custom_command(TARGET Skybox
 )
 
 include(GNUInstallDirs)
+
+# Define components for installation
+set(CPACK_COMPONENTS_ALL WS6EX1_Runtime OpenVRdlls QtPlugins QTdlls VTKdlls Skybox)
+
+
+# Define installation directories for each component
+install(TARGETS WS6EX1
+    BUNDLE DESTINATION . COMPONENT WS6EX1_Runtime
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT WS6EX1_Runtime
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT WS6EX1_Runtime
+)
+
+
+install(DIRECTORY "D:/DLLs/" DESTINATION bin COMPONENT OpenVRdlls FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/openvr-master/openvr-master/bin/win64" DESTINATION bin COMPONENT OpenVRdlls FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/Qt/6.7.0/msvc2019_64/plugins/platforms/" DESTINATION bin/plugins/platforms COMPONENT QtPlugins FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/Qt/6.7.0/msvc2019_64/bin/" DESTINATION bin COMPONENT QTdlls FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/VTK/bin/" DESTINATION bin COMPONENT VTKdlls FILES_MATCHING PATTERN "*.dll")
+
+# Install the skybox.hdr file with a separate component
+#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/skybox.hdr
+#    DESTINATION ${CMAKE_INSTALL_BINDIR}
+#    COMPONENT Skybox
+#)
+
+
 install(TARGETS Base_Project
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -101,6 +127,8 @@ add_custom_command(TARGET VRBindings
         ${CMAKE_BINARY_DIR}/
 )
 
+
+
 # Include CPack
 include(CPack)
 
@@ -117,3 +145,6 @@ install(TARGETS WS6EX1
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+
+set(CPACK_NSIS_MODIFY_PATH ON)
