@@ -26,6 +26,8 @@ set(PROJECT_SOURCES
 	optiondialog.ui
 	optiondialog.cpp
 	optiondialog.h
+	VRRenderThread.cpp
+	VRRenderThread.h
 	
 )
 
@@ -34,8 +36,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         optiondialog.h optiondialog.cpp optiondialog.ui
-        VRRenderThread.cpp
-        VRRenderThread.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Base_Project APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -71,7 +71,41 @@ set_target_properties(Base_Project PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
+add_custom_target(Skybox ALL)
+add_custom_command(TARGET Skybox
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_SOURCE_DIR}/skybox.hdr
+    ${CMAKE_BINARY_DIR}/skybox.hdr
+)
+
 include(GNUInstallDirs)
+
+# Define components for installation
+set(CPACK_COMPONENTS_ALL WS6EX1_Runtime OpenVRdlls QtPlugins QTdlls VTKdlls Skybox)
+
+
+# Define installation directories for each component
+install(TARGETS WS6EX1
+    BUNDLE DESTINATION . COMPONENT WS6EX1_Runtime
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT WS6EX1_Runtime
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT WS6EX1_Runtime
+)
+
+
+install(DIRECTORY "D:/DLLs/" DESTINATION bin COMPONENT OpenVRdlls FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/openvr-master/openvr-master/bin/win64" DESTINATION bin COMPONENT OpenVRdlls FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/Qt/6.7.0/msvc2019_64/plugins/platforms/" DESTINATION bin/plugins/platforms COMPONENT QtPlugins FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/Qt/6.7.0/msvc2019_64/bin/" DESTINATION bin COMPONENT QTdlls FILES_MATCHING PATTERN "*.dll")
+install(DIRECTORY "D:/VTK/bin/" DESTINATION bin COMPONENT VTKdlls FILES_MATCHING PATTERN "*.dll")
+
+# Install the skybox.hdr file with a separate component
+#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/skybox.hdr
+#    DESTINATION ${CMAKE_INSTALL_BINDIR}
+#    COMPONENT Skybox
+#)
+
+
 install(TARGETS Base_Project
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -93,6 +127,8 @@ add_custom_command(TARGET VRBindings
         ${CMAKE_BINARY_DIR}/
 )
 
+
+
 # Include CPack
 include(CPack)
 
@@ -104,8 +140,19 @@ else()
 endif()
 
 # Install targets
+<<<<<<< HEAD
 # install(TARGETS WS6EX1
 #     BUNDLE DESTINATION .
 #     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 #     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 # )
+=======
+install(TARGETS WS6EX1
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+
+set(CPACK_NSIS_MODIFY_PATH ON)
+>>>>>>> f23df1f9d4e8ea74636de0523c01068416d8eee2
