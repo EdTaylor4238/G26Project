@@ -11,7 +11,7 @@
 #include <vtkSmartPointer.h>
 #include <vtkActor.h>
 #include <vtkSTLReader.h>
-#include <vtkPolyDataMapper.h>
+#include <vtkDataSetMapper.h>
 #include <vtkColor.h>
 
   /* Commented out for now, will be uncommented later when you have
@@ -108,12 +108,17 @@ int ModelPart::row() const {
 //    // You may want to update the color in your rendering system (e.g., VTK) here
 //    // Example: set the color of the VTK actor
 //   
-//    this->GetProperty()->SetColor(getColourR, getColourG, getColourB);actor->GetProperty()->SetColor(0, 0, 1);
+//
 //}
 
 void ModelPart::setColor(QColor clr) {
     colour = clr;
 }
+
+double ModelPart::getColorR() {     return colour.red();    }
+double ModelPart::getColorG() {     return colour.green();  }
+double ModelPart::getColorB() {     return colour.blue();   }
+double ModelPart::getColorA() {     return colour.alpha();  }
 
 bool ModelPart::getVisibility(void)
 {
@@ -156,13 +161,13 @@ void ModelPart::loadSTL(QString fileName) {
      // The mapper is responsible for pushing the geometry into the graphics
    // library. It may also do color mapping, if scalars or other attributes are
    // defined.
-     stlReader = vtkSmartPointer<vtkSTLReader>::New();
-     stlReader->SetFileName(fileName.toStdString().c_str());
-     stlReader->Update();
-     /* 2. Initialise the part's vtkMapper */
-    vtkNew<vtkPolyDataMapper> mapper;
+    stlReader = vtkSmartPointer<vtkSTLReader>::New();
+    stlReader->SetFileName(fileName.toStdString().c_str());
+    stlReader->Update();
+    /* 2. Initialise the part's vtkMapper */
+    mapper = vtkSmartPointer<vtkDataSetMapper>::New();
     mapper->SetInputConnection(stlReader->GetOutputPort());
-     /* 3. Initialise the part's vtkActor and link to the mapper */
+    /* 3. Initialise the part's vtkActor and link to the mapper */
     actor = vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);
 }
@@ -173,26 +178,15 @@ vtkSmartPointer<vtkActor> ModelPart::getActor() {
     }
 
      vtkActor* ModelPart::getNewActor() {
-         /* This is a placeholder function that will be used in the next worksheet.
-          * The default mapper/actor combination can only be used to render the part in
-          * the GUI, it CANNOT also be used to render the part in VR. This means you need
-          * to create a second mapper/actor combination for use in VR - that is the role
-          * of this function. */
+         vtkSmartPointer<vtkDataSetMapper> newMapper = vtkSmartPointer<vtkDataSetMapper>::New();
+         newMapper->SetInputConnection(stlReader->GetOutputPort());
 
+         vtkSmartPointer<vtkActor> newActor = vtkSmartPointer<vtkActor>::New();
+         newActor->SetMapper(newMapper);
 
-          /* 1. Create new mapper */
-        
-          /* 2. Create new actor and link to mapper */
-         
-          /* 3. Link the vtkProperties of the original actor to the new actor. This means
-           *    if you change properties of the original part (colour, position, etc), the
-             changes will be reflected in the GUI AND VR rendering.*/
-                
-         
-            // See the vtkActor documentation, particularly the GetProperty() and SetProperty() functions.
+         newActor->SetProperty(actor->GetProperty());
 
-           /* The new vtkActor pointer must be returned here */
-           return nullptr;
+         return newActor;
        }
 
      //VTKLighting

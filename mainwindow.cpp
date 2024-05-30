@@ -5,13 +5,13 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "optiondialog.h"
-#include<qcheckbox.h>
+#include <qcheckbox.h>
 #include <QAbstractItemModel>
-#include "vtkCylinderSource.h"
-#include "vtkActor.h"
-#include "vtkProperty.h"
-#include "vtkPolyDataMapper.h"
-#include "vtkCamera.h"
+#include <vtkCylinderSource.h>
+#include <vtkActor.h>
+#include <vtkProperty.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkCamera.h>
 #include <vtkRenderer.h>
 #include <vtkLight.h>
 
@@ -220,11 +220,12 @@ void MainWindow::updateRenderFromTree(const QModelIndex& index) {
         ModelPart* selectedPart = static_cast<ModelPart*>(index.internalPointer());
         /* Retrieve actor from selected part and add to renderer */
         vtkSmartPointer<vtkActor> actor = selectedPart->getActor();
-        if (actor) {
+        if (actor && selectedPart->getVisibility()) {
+            actor->GetProperty()->SetColor((double)selectedPart->getColorR(), (double)selectedPart->getColorG(), (double)selectedPart->getColorB());
             renderer->AddActor(actor);
             emit statusUpdateMessage("Added actor to renderer", 3000);
         }
-    }
+    } 
     /* Check to see if this part has any children */
     if (!partList->hasChildren(index) || (index.flags() & Qt::ItemNeverHasChildren)) {
         return;
@@ -251,18 +252,20 @@ void MainWindow::handleOptionDialog()
         dialog.saveSettings();
         if (dialog.exec() == QDialog::Accepted) {
             // Set the visibility of the item based on dialog.isVisible (true for visible, false for invisible)
-            selectedItem->setVisible(dialog.isVisible);
-            selectedItem->setColor(dialog.color);
-            selectedItem->setName(dialog.lineEditText);
+            //selectedItem->SetVisible(dialog.isVisible);
+            //selectedItem->SetColor(dialog.color);
+            //selectedItem->SetName(dialog.lineEditText);
 
-            QString boolString = selectedItem->getVisibility() ? "true" : "false";
-            QString statusMessage = QString("Visibility: %1")
-                .arg(boolString);
+            //QString boolString = selectedItem->getVisibility() ? "true" : "false";
+            //QString statusMessage = QString("Visibility: %1")
+            //    .arg(boolString);
 
-            // You may need to update the view after changing the data
-            ui->treeView->update();
+            //// You may need to update the view after changing the data
+            //ui->treeView->update();
 
-            emit statusUpdateMessage(statusMessage, 3000);
+            //emit statusUpdateMessage(statusMessage, 3000);
+            dialog.setProperties(selectedItem, selectedItem->getVisibility(), selectedItem->data(0).toString(), selectedItem->getColor());
+            dialog.saveSettings();
         }
         else {
             // Handle the case where the selected index is not valid

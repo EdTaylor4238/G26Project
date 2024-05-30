@@ -79,6 +79,12 @@ public:
     */
     void setColor(QColor clr);
     QColor getColor();
+    double getColorR();
+    double getColorG();
+    double getColorB();
+    double getColorA();
+
+
 
     /**
     *   Sets the name that is returned from the option dialog
@@ -112,6 +118,7 @@ private:
      vtkSmartPointer<vtkSTLReader>               stlReader;               /**< Datafile from which part loaded */
      vtkSmartPointer<vtkMapper>                  mapper;             /**< Mapper for rendering */
      vtkSmartPointer<vtkActor>                   actor;              /**< Actor for rendering */
+     vtkColor3<unsigned char>                  color;
 };
 
 #endif
