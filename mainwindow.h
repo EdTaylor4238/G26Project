@@ -47,6 +47,8 @@ private:
     vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow;
     VRRenderThread *VRRenderer;
 
+    bool startStopButt = false;
+
 private:
     Ui::MainWindow *ui;
 };

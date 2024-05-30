@@ -25,6 +25,7 @@
 #include <vtkSTLReader.h>
 #include <vtkDataSetmapper.h>
 #include <vtkCallbackCommand.h>
+#include <vtkLight.h>
 
 
 /* The class constructor is called by MainWindow and runs in the primary program thread, this thread

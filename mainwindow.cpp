@@ -136,11 +136,21 @@ void MainWindow::handleButton()
 
 void MainWindow::handleButton2()
 {
-    // Emit the statusUpdateMessage signal to update the status bar
-    ui->treeView->clearSelection();
-    emit statusUpdateMessage("VR", 300); // 3000 milliseconds timeout
-    VRRenderer = new VRRenderThread();
-    VRRenderer->start();
+    if (startStopButt != true)
+    {
+        startStopButt = true;
+        // Emit the statusUpdateMessage signal to update the status bar
+        ui->treeView->clearSelection();
+        emit statusUpdateMessage("VR", 300); // 3000 milliseconds timeout
+        VRRenderer = new VRRenderThread();
+        VRRenderer->start();
+    }
+    else
+    {
+        startStopButt = false;
+        VRRenderer->issueCommand(VRRenderThread::END_RENDER, 0);
+    }
+    
 }
 
 void MainWindow::handleTreeClicked(const QModelIndex& index) {
