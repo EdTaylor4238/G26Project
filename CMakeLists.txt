@@ -1,18 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
-
 project(Base_Project VERSION 0.1 LANGUAGES CXX)
-
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 find_package(VTK REQUIRED)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
@@ -26,16 +21,15 @@ set(PROJECT_SOURCES
 	optiondialog.ui
 	optiondialog.cpp
 	optiondialog.h
-	VRRenderThread.cpp
-	VRRenderThread.h
 	
 )
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Base_Project
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         optiondialog.h optiondialog.cpp optiondialog.ui
+        VRRenderThread.cpp
+        VRRenderThread.h
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Base_Project APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -54,9 +48,7 @@ else()
         )
     endif()
 endif()
-
 target_link_libraries(Base_Project PRIVATE Qt${QT_VERSION_MAJOR}::Widgets ${VTK_LIBRARIES})
-
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
@@ -70,55 +62,17 @@ set_target_properties(Base_Project PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
-
-add_custom_target(Skybox ALL)
-add_custom_command(TARGET Skybox
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_SOURCE_DIR}/skybox.hdr
-    ${CMAKE_BINARY_DIR}/skybox.hdr
-)
-
 include(GNUInstallDirs)
-
-# Define components for installation
-set(CPACK_COMPONENTS_ALL WS6EX1_Runtime OpenVRdlls QtPlugins QTdlls VTKdlls Skybox)
-
-
-# Define installation directories for each component
-# install(TARGETS WS6EX1
-#     BUNDLE DESTINATION . COMPONENT WS6EX1_Runtime
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT WS6EX1_Runtime
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT WS6EX1_Runtime
-# )
-
-
-install(DIRECTORY "D:/DLLs/" DESTINATION bin COMPONENT OpenVRdlls FILES_MATCHING PATTERN "*.dll")
-install(DIRECTORY "D:/openvr-master/openvr-master/bin/win64" DESTINATION bin COMPONENT OpenVRdlls FILES_MATCHING PATTERN "*.dll")
-install(DIRECTORY "D:/Qt/6.7.0/msvc2019_64/plugins/platforms/" DESTINATION bin/plugins/platforms COMPONENT QtPlugins FILES_MATCHING PATTERN "*.dll")
-install(DIRECTORY "D:/Qt/6.7.0/msvc2019_64/bin/" DESTINATION bin COMPONENT QTdlls FILES_MATCHING PATTERN "*.dll")
-install(DIRECTORY "D:/VTK/bin/" DESTINATION bin COMPONENT VTKdlls FILES_MATCHING PATTERN "*.dll")
-
-# Install the skybox.hdr file with a separate component
-#install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/skybox.hdr
-#    DESTINATION ${CMAKE_INSTALL_BINDIR}
-#    COMPONENT Skybox
-#)
-
-
 install(TARGETS Base_Project
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(Base_Project)
 endif()
-
 # Add custom target
 add_custom_target(VRBindings)
-
 # Add custom command to copy directory
 add_custom_command(TARGET VRBindings
     PRE_BUILD
@@ -126,33 +80,3 @@ add_custom_command(TARGET VRBindings
         ${CMAKE_SOURCE_DIR}/vrbindings
         ${CMAKE_BINARY_DIR}/
 )
-
-
-
-# Include CPack
-include(CPack)
-
-# Set CPack Generator based on platform
-if (WIN32)
-    set(CPACK_GENERATOR "NSIS")
-else()
-    set(CPACK_GENERATOR "ZIP")
-endif()
-
-# Install targets
-# <<<<<<< HEAD
-# install(TARGETS WS6EX1
-#     BUNDLE DESTINATION .
-#     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-# )
-# =======
-# install(TARGETS WS6EX1
-#     BUNDLE DESTINATION .
- #    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
- #    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-# )
-
-
-# set(CPACK_NSIS_MODIFY_PATH ON)
-# >>>>>>> f23df1f9d4e8ea74636de0523c01068416d8eee2
